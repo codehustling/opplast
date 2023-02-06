@@ -21,7 +21,7 @@ def get_path(file_path: str) -> str:
 
 
 class Upload:
-    def _init_(
+    def __init__(
         self,
         profile: Union[str, FirefoxProfile],
         executable_path: str = "geckodriver",
