@@ -26,7 +26,7 @@ class Upload:
         profile: Union[str, FirefoxProfile],
         executable_path: str = "geckodriver",
         timeout: int = 3,
-        headless: bool = False,
+        headless: bool = True,
         debug: bool = True,
         options: FirefoxOptions = webdriver.FirefoxOptions(),
     ) -> None:
@@ -34,9 +34,9 @@ class Upload:
             profile = webdriver.FirefoxProfile(profile)
 
         options.headless = headless
-
+        options.binary_location = r'/usr/bin/firefox-esr'
         self.driver = webdriver.Firefox(
-            firefox_profile=profile, options=options, executable_path=executable_path
+            firefox_profile=profile, options=options
         )
         self.timeout = timeout
         self.log = Log(debug)
