@@ -10,6 +10,12 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions, FirefoxProfile
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from channel_number2 import channel_number2
+
+channelid = channel_number2()
 
 def get_path(file_path: str) -> str:
     # no clue why, but this character gets added for me when running
@@ -17,12 +23,12 @@ def get_path(file_path: str) -> str:
 
 
 class Upload:
-    def __init__(
+    def _init_(
         self,
         profile: Union[str, FirefoxProfile],
         executable_path: str = "geckodriver",
         timeout: int = 3,
-        headless: bool = True,
+        headless: bool = False,
         debug: bool = True,
         options: FirefoxOptions = webdriver.FirefoxOptions(),
     ) -> None:
@@ -71,9 +77,23 @@ class Upload:
         """
         if not file:
             raise FileNotFoundError(f'Could not find file with path: "{file}"')
-
+        # channel_no=channelid
+        channel_no = 1
+        self.driver.get("https://www.youtube.com/channel_switcher?next=%2Faccount&feature=settings")
+        xpath_for_channel=f"/html/body/ytd-app/div[{channel_no}]/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-channel-switcher-page-renderer/div[2]/div[2]/ytd-account-item-renderer[1]/tp-yt-paper-icon-item"
+        WebDriverWait(self.driver, 10).until(
+        EC.visibility_of_element_located((By.XPATH, xpath_for_channel)))
+        self.driver.find_element_by_xpath(xpath_for_channel).click()
         self.driver.get(YOUTUBE_UPLOAD_URL)
         sleep(self.timeout)
+        try:
+            temp =  self.driver.find_element_by_xpath(f"/html/body/ytcp-warm-welcome-dialog/ytcp-dialog/tp-yt-paper-dialog/div[2]/div/ytcp-button")
+            temp.click()
+            print("Try block")
+        except Exception as e:
+            print(e)
+
+
 
         self.log.debug(f'Trying to upload "{file}" to YouTube...')
 
@@ -93,6 +113,17 @@ class Upload:
             return True, video_id
 
         self.log.debug(f'Trying to set "{title}" as title...')
+        sleep(self.timeout)
+        try:
+
+            self.driver.find_element_by_xpath("/html/body/ytcp-auth-confirmation-dialog/ytcp-confirmation-dialog/ytcp-dialog/tp-yt-paper-dialog/div[3]/div[2]/ytcp-button[2]/div").click()
+            sleep(self.timeout)
+            self.driver.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendkeys("Mai_San987**")
+            import org.openqa.selenium.Keys
+
+            self.driver.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendKeys(Keys.RETURN)
+        except Exception as e:
+            print(e)    
 
         # TITLE
         title_field = self.click(modal.find_element_by_id(TEXTBOX))
@@ -133,6 +164,7 @@ class Upload:
             sleep(self.timeout)
 
         self.log.debug('Trying to set video to "Not made for kids"...')
+
         kids_section = modal.find_element_by_name(NOT_MADE_FOR_KIDS_LABEL)
         kids_section.find_element_by_id(RADIO_LABEL).click()
         sleep(self.timeout)
@@ -195,4 +227,4 @@ class Upload:
 
     def close(self):
         self.driver.quit()
-        self.log.debug("Closed Firefox")
+        self.log.debug("Closed Firefox")
