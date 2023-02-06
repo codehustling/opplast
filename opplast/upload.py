@@ -98,7 +98,7 @@ class Upload:
         self.driver.find_element(By.XPATH,INPUT_FILE_VIDEO).send_keys(get_path(file))
         sleep(self.timeout)
 
-        modal = self.driver.find_element_by_css_selector(UPLOAD_DIALOG_MODAL)
+        modal = self.driver.find_element(By.CSS_SELECTOR,UPLOAD_DIALOG_MODAL)
         self.log.debug("Found YouTube upload Dialog Modal")
 
         if only_upload:
@@ -114,17 +114,17 @@ class Upload:
         sleep(self.timeout)
         try:
 
-            self.driver.find_element_by_xpath("/html/body/ytcp-auth-confirmation-dialog/ytcp-confirmation-dialog/ytcp-dialog/tp-yt-paper-dialog/div[3]/div[2]/ytcp-button[2]/div").click()
+            self.driver.find_element(By.XPATH,"/html/body/ytcp-auth-confirmation-dialog/ytcp-confirmation-dialog/ytcp-dialog/tp-yt-paper-dialog/div[3]/div[2]/ytcp-button[2]/div").click()
             sleep(self.timeout)
-            self.driver.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendkeys("Mai_San987**")
+            self.driver.find_element(By.XPATH,"/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendkeys("Mai_San987**")
             import org.openqa.selenium.Keys
 
-            self.driver.find_element_by_xpath("/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendKeys(Keys.RETURN)
+            self.driver.find_element(By.XPATH,"/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendKeys(Keys.RETURN)
         except Exception as e:
             print(e)    
 
         # TITLE
-        title_field = self.click(modal.find_element_by_id(TEXTBOX))
+        title_field = self.click(modal.find_element(By.ID,TEXTBOX))
 
         # get file name (default) title
         title = title if title else title_field.text
@@ -149,26 +149,26 @@ class Upload:
                 )
 
             self.log.debug(f'Trying to set "{description}" as description...')
-            container = modal.find_element_by_xpath(DESCRIPTION_CONTAINER)
-            description_field = self.click(container.find_element_by_id(TEXTBOX))
+            container = modal.find_element(By.XPATH,DESCRIPTION_CONTAINER)
+            description_field = self.click(container.find_element(By.ID,TEXTBOX))
 
             self.send(description_field, description)
 
         if thumbnail:
             self.log.debug(f'Trying to set "{thumbnail}" as thumbnail...')
-            modal.find_element_by_xpath(INPUT_FILE_THUMBNAIL).send_keys(
+            modal.find_element(By.XPATH,INPUT_FILE_THUMBNAIL).send_keys(
                 get_path(thumbnail)
             )
             sleep(self.timeout)
 
         self.log.debug('Trying to set video to "Not made for kids"...')
 
-        kids_section = modal.find_element_by_name(NOT_MADE_FOR_KIDS_LABEL)
-        kids_section.find_element_by_id(RADIO_LABEL).click()
+        kids_section = modal.find_element(By.NAME,NOT_MADE_FOR_KIDS_LABEL)
+        kids_section.find_element(By.ID,RADIO_LABEL).click()
         sleep(self.timeout)
 
         if tags:
-            self.click(modal.find_element_by_xpath(MORE_OPTIONS_CONTAINER))
+            self.click(modal.find_element(By.XPATH,MORE_OPTIONS_CONTAINER))
 
             tags = ",".join(str(tag) for tag in tags)
 
@@ -178,8 +178,8 @@ class Upload:
                 )
 
             self.log.debug(f'Trying to set "{tags}" as tags...')
-            container = modal.find_element_by_xpath(TAGS_CONTAINER)
-            tags_field = self.click(container.find_element_by_id(TEXT_INPUT))
+            container = modal.find_element(By.XPATH,TAGS_CONTAINER)
+            tags_field = self.click(container.find_element(By.ID,TEXT_INPUT))
             self.send(tags_field, tags)
 
         # sometimes you have 4 tabs instead of 3
@@ -191,18 +191,18 @@ class Upload:
                 pass
 
         self.log.debug("Trying to set video visibility to public...")
-        public_main_button = modal.find_element_by_name(PUBLIC_BUTTON)
-        public_main_button.find_element_by_id(RADIO_LABEL).click()
+        public_main_button = modal.find_element(By.NAME,PUBLIC_BUTTON)
+        public_main_button.find_element(By.ID,RADIO_LABEL).click()
         video_id = self.get_video_id(modal)
 
         while self.not_uploaded(modal):
             self.log.debug("Still uploading...")
             sleep(1)
 
-        done_button = modal.find_element_by_id(DONE_BUTTON)
+        done_button = modal.find_element(By.ID,DONE_BUTTON)
 
         if done_button.get_attribute("aria-disabled") == "true":
-            self.log.debug(self.driver.find_element_by_xpath(ERROR_CONTAINER).text)
+            self.log.debug(self.driver.find_element(By.XPATH,ERROR_CONTAINER).text)
             return False, None
 
         self.click(done_button)
@@ -212,8 +212,8 @@ class Upload:
     def get_video_id(self, modal) -> Optional[str]:
         video_id = None
         try:
-            video_url_container = modal.find_element_by_xpath(VIDEO_URL_CONTAINER)
-            video_url_element = video_url_container.find_element_by_xpath(
+            video_url_container = modal.find_element(By.XPATH,VIDEO_URL_CONTAINER)
+            video_url_element = video_url_container.find_element(By.XPATH,
                 VIDEO_URL_ELEMENT
             )
 
