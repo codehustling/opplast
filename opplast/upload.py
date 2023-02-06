@@ -13,9 +13,7 @@ from selenium.webdriver import FirefoxOptions, FirefoxProfile
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from channel_number2 import channel_number2
 
-channelid = channel_number2()
 
 def get_path(file_path: str) -> str:
     # no clue why, but this character gets added for me when running
