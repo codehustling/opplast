@@ -55,11 +55,11 @@ class Upload:
         sleep(self.timeout)
 
     def click_next(self, modal) -> None:
-        modal.find_element_by_id(NEXT_BUTTON).click()
+        modal.find_element(By.ID,NEXT_BUTTON).click()
         sleep(self.timeout)
 
     def not_uploaded(self, modal) -> bool:
-        return modal.find_element_by_xpath(STATUS_CONTAINER).text.find(UPLOADED) != -1
+        return modal.find_element(By.XPATH,STATUS_CONTAINER).text.find(UPLOADED) != -1
 
     def upload(
         self,
@@ -81,11 +81,11 @@ class Upload:
         xpath_for_channel=f"/html/body/ytd-app/div[{channel_no}]/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-channel-switcher-page-renderer/div[2]/div[2]/ytd-account-item-renderer[1]/tp-yt-paper-icon-item"
         WebDriverWait(self.driver, 10).until(
         EC.visibility_of_element_located((By.XPATH, xpath_for_channel)))
-        self.driver.find_element_by_xpath(xpath_for_channel).click()
+        self.driver.find_element(By.XPATH,xpath_for_channel).click()
         self.driver.get(YOUTUBE_UPLOAD_URL)
         sleep(self.timeout)
         try:
-            temp =  self.driver.find_element_by_xpath(f"/html/body/ytcp-warm-welcome-dialog/ytcp-dialog/tp-yt-paper-dialog/div[2]/div/ytcp-button")
+            temp =  self.driver.find_element(By.XPATH,f"/html/body/ytcp-warm-welcome-dialog/ytcp-dialog/tp-yt-paper-dialog/div[2]/div/ytcp-button")
             temp.click()
             print("Try block")
         except Exception as e:
@@ -95,7 +95,7 @@ class Upload:
 
         self.log.debug(f'Trying to upload "{file}" to YouTube...')
 
-        self.driver.find_element_by_xpath(INPUT_FILE_VIDEO).send_keys(get_path(file))
+        self.driver.find_element(By.XPATH,INPUT_FILE_VIDEO).send_keys(get_path(file))
         sleep(self.timeout)
 
         modal = self.driver.find_element_by_css_selector(UPLOAD_DIALOG_MODAL)
