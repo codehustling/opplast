@@ -69,14 +69,13 @@ class Upload:
         thumbnail: str = "",
         tags: list = [],
         only_upload: bool = False,
+        channel_no=1
     ) -> Tuple[bool, Optional[str]]:
         """Uploads a video to YouTube.
         Returns if the video was uploaded and the video id.
         """
         if not file:
             raise FileNotFoundError(f'Could not find file with path: "{file}"')
-        # channel_no=channelid
-        channel_no = 1
         self.driver.get("https://www.youtube.com/channel_switcher?next=%2Faccount&feature=settings")
         xpath_for_channel=f"/html/body/ytd-app/div[{channel_no}]/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-channel-switcher-page-renderer/div[2]/div[2]/ytd-account-item-renderer[1]/tp-yt-paper-icon-item"
         WebDriverWait(self.driver, 10).until(
