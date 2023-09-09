@@ -14,6 +14,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+import os
 
 def get_path(file_path: str) -> str:
     # no clue why, but this character gets added for me when running
@@ -26,7 +27,7 @@ class Upload:
         profile: Union[str, FirefoxProfile],
         executable_path: str = "geckodriver",
         timeout: int = 3,
-        headless: bool = True,
+        headless: bool = False,
         debug: bool = True,
         options: FirefoxOptions = webdriver.FirefoxOptions(),
     ) -> None:
@@ -34,7 +35,11 @@ class Upload:
             profile = webdriver.FirefoxProfile(profile)
 
         options.headless = headless
-        options.binary_location = r'/usr/bin/firefox-esr'
+        
+        if os.name!="nt":
+            options.binary_location = r'/usr/bin/firefox-esr'
+            headless=True
+            
         self.driver = webdriver.Firefox(
             firefox_profile=profile, options=options
         )
@@ -77,8 +82,8 @@ class Upload:
         if not file:
             raise FileNotFoundError(f'Could not find file with path: "{file}"')
         self.driver.get("https://www.youtube.com/channel_switcher?next=%2Faccount&feature=settings")
-        xpath_for_channel=f"/html/body/ytd-app/div[{channel_no}]/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-channel-switcher-page-renderer/div[2]/div[2]/ytd-account-item-renderer[1]/tp-yt-paper-icon-item"
-        WebDriverWait(self.driver, 10).until(
+        xpath_for_channel=f"/html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-channel-switcher-page-renderer/div[2]/div[3]/ytd-account-item-renderer[{channel_no}]/tp-yt-paper-icon-item"
+        WebDriverWait(self.driver, 20).until(
         EC.visibility_of_element_located((By.XPATH, xpath_for_channel)))
         self.driver.find_element(By.XPATH,xpath_for_channel).click()
         self.driver.get(YOUTUBE_UPLOAD_URL)
@@ -148,7 +153,7 @@ class Upload:
                 )
 
             self.log.debug(f'Trying to set "{description}" as description...')
-            container = modal.find_element(By.XPATH,DESCRIPTION_CONTAINER)
+            container = modal.find_element(By.CSS_SELECTOR,"html body#html-body ytcp-uploads-dialog tp-yt-paper-dialog#dialog.style-scope.ytcp-uploads-dialog div.dialog-content.style-scope.ytcp-uploads-dialog ytcp-animatable#scrollable-content.metadata-fade-in-section.style-scope.ytcp-uploads-dialog ytcp-ve.style-scope.ytcp-uploads-dialog ytcp-video-metadata-editor#details.style-scope.ytcp-uploads-dialog div.left-col.style-scope.ytcp-video-metadata-editor ytcp-video-metadata-editor-basics#basics.style-scope.ytcp-video-metadata-editor div#description-container.input-container.description.style-scope.ytcp-video-metadata-editor-basics ytcp-video-description#description-wrapper.style-scope.ytcp-video-metadata-editor-basics div#description-container.input-container.description.style-scope.ytcp-video-description ytcp-social-suggestions-textbox#description-textarea.style-scope.ytcp-video-description ytcp-form-input-container#container.fill-height.style-scope.ytcp-social-suggestions-textbox")
             description_field = self.click(container.find_element(By.ID,TEXTBOX))
 
             self.send(description_field, description)
@@ -224,4 +229,4 @@ class Upload:
 
     def close(self):
         self.driver.quit()
-        self.log.debug("Closed Firefox")
+        self.log.debug("Closed Firefox")
