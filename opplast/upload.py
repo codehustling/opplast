@@ -81,7 +81,7 @@ class Upload:
         """
         if not file:
             raise FileNotFoundError(f'Could not find file with path: "{file}"')
-        self.driver.get("https://www.youtube.com/channel_switcher?next=%2Faccount&feature=settings")
+        self.driver.get("https://www.youtube.com/channel_switcher")
         xpath_for_channel=f"/html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-channel-switcher-page-renderer/div[2]/div[3]/ytd-account-item-renderer[{channel_no}]/tp-yt-paper-icon-item"
         WebDriverWait(self.driver, 20).until(
         EC.visibility_of_element_located((By.XPATH, xpath_for_channel)))
