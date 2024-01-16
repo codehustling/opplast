@@ -33,12 +33,12 @@ class Upload:
     ) -> None:
         if isinstance(profile, str):
             profile = webdriver.FirefoxProfile(profile)
-
-        options.headless = headless
         
         if os.name!="nt":
             options.binary_location = r'/usr/bin/firefox-esr'
             headless=True
+            
+        options.headless = headless
             
         self.driver = webdriver.Firefox(
             firefox_profile=profile, options=options
