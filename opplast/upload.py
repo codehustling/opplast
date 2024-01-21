@@ -8,11 +8,11 @@ from time import sleep
 
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
-from selenium.webdriver import FirefoxOptions, FirefoxProfile
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.firefox.options import Options
 
 import os
 
@@ -29,20 +29,15 @@ class Upload:
         timeout: int = 3,
         headless: bool = False,
         debug: bool = True,
-        options: FirefoxOptions = webdriver.FirefoxOptions(),
+        options
     ) -> None:
-        if isinstance(profile, str):
-            profile = webdriver.FirefoxProfile(profile)
+
+        ffOptions = Options()
+        ffOptions.add_argument("-headless")
+        ffOptions.add_argument("-profile")
+        ffOptions.add_argument(profile)
+        self.driver = webdriver.Firefox(options=ffOptions)   
         
-        if os.name!="nt":
-            options.binary_location = r'/usr/bin/firefox-esr'
-            headless=True
-            
-        options.headless = headless
-            
-        self.driver = webdriver.Firefox(
-            firefox_profile=profile, options=options
-        )
         self.timeout = timeout
         self.log = Log(debug)
 
