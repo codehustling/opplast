@@ -29,10 +29,9 @@ class Upload:
         timeout: int = 3,
         headless: bool = False,
         debug: bool = True,
-        options
+        ffOptions = Options()
     ) -> None:
 
-        ffOptions = Options()
         ffOptions.add_argument("-headless")
         ffOptions.add_argument("-profile")
         ffOptions.add_argument(profile)
