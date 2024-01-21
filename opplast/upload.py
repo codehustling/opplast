@@ -115,7 +115,6 @@ class Upload:
             self.driver.find_element(By.XPATH,"/html/body/ytcp-auth-confirmation-dialog/ytcp-confirmation-dialog/ytcp-dialog/tp-yt-paper-dialog/div[3]/div[2]/ytcp-button[2]/div").click()
             sleep(self.timeout)
             self.driver.find_element(By.XPATH,"/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendkeys("Mai_San987**")
-            import org.openqa.selenium.Keys
 
             self.driver.find_element(By.XPATH,"/html/body/div[1]/div[1]/div[2]/div/div[2]/div/div/div[2]/div/div[1]/div/form/span/section/div/div/div[2]/div[1]/div/div/div/div/div[1]/div/div[1]/input").sendKeys(Keys.RETURN)
         except Exception as e:
